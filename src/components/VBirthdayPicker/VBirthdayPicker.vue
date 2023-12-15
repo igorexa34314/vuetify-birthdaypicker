@@ -1,5 +1,7 @@
 <template>
-	<div class="d-flex flex-column flex-sm-row align-sm-center" :style="{ 'max-width': `${maxWidth}px` }">
+	<div
+		class="v-birthdaypicker d-flex flex-column flex-sm-row align-sm-center"
+		:style="{ 'max-width': `${maxWidth}px` }">
 		<v-select
 			v-for="item in datePickerDateItems"
 			:key="item.type"
@@ -9,23 +11,27 @@
 			:density="density"
 			class="mr-4"
 			:variant="variant"
+			hide-details
 			:class="`${item.type}-select`"
-			:style="{ order: item.order }" />
+			:style="{ order: item.order }">
+		</v-select>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { VSelect } from 'vuetify/components';
 
 const props = withDefaults(
 	defineProps<{
-		modelValue: string | Date;
+		modelValue: Date;
 		fromYear?: string | number;
 		order?: 'dd-mmm-yyyy' | 'mmm-dd-yyyy';
 		density?: VSelect['$props']['density'];
 		variant?: VSelect['$props']['variant'];
 		maxWidth?: string | number;
+		monthFormat?: Intl.DateTimeFormatOptions['month'];
+		customFormatter?: Intl.DateTimeFormat['format'];
 	}>(),
 	{
 		modelValue: () => new Date(),
@@ -34,25 +40,27 @@ const props = withDefaults(
 		variant: 'outlined',
 		density: 'compact',
 		maxWidth: 'none',
+		monthFormat: 'long',
 	}
 );
+
 const emit = defineEmits<{
 	(e: 'update:model-value', val: string | Date): void;
 }>();
 
 const monthsForLocales = (
-	format: Intl.DateTimeFormatOptions['month'] = 'long',
+	format: Intl.DateTimeFormatOptions['month'],
 	customFormatter?: Intl.DateTimeFormat['format']
 ) => {
 	const formatter = customFormatter ?? new Intl.DateTimeFormat('en-US', { month: format }).format;
-	return [...Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, ++m % 12)), { month: format }));
+	return [...new Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, m++ % 12))));
 };
 
 const datePickerDateItems = computed(() => [
 	{
 		type: 'month',
 		title: 'Month',
-		items: monthsForLocales('long').map((title, i) => ({ title, value: ++i })),
+		items: monthsForLocales(props.monthFormat, props.customFormatter).map((title, i) => ({ title, value: i++ })),
 		order: props.order === 'dd-mmm-yyyy' ? 2 : 1,
 	},
 	{
@@ -72,10 +80,10 @@ const datePickerDateItems = computed(() => [
 	},
 ]);
 
-const datePickerState = reactive({
-	month: new Date(props.modelValue).getMonth(),
-	day: new Date(props.modelValue).getDate(),
-	year: new Date(props.modelValue).getFullYear(),
+const datePickerState = ref({
+	year: props.modelValue.getFullYear(),
+	month: props.modelValue.getMonth(),
+	day: props.modelValue.getDate(),
 });
 
 watch(
@@ -86,3 +94,8 @@ watch(
 	{ deep: true }
 );
 </script>
+
+<style scoped>
+.v-birthdaypicker {
+}
+</style>

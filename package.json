@@ -1,19 +1,32 @@
 {
 	"name": "vuetify-birthdaypicker",
-	"private": true,
-	"version": "0.0.0",
+	"private": false,
+	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
 		"build": "vue-tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
+		"lint": "eslint . --no-eslintrc --config .eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+		"format": "prettier --write --cache src/"
 	},
 	"dependencies": {
 		"vue": "^3.3.11",
 		"vuetify": "^3.4.7"
 	},
+	"peerDependencies": {
+		"vuetify": "^3.0.0"
+	},
 	"devDependencies": {
+		"@rushstack/eslint-patch": "^1.6.1",
+		"@types/node": "^20.10.4",
 		"@vitejs/plugin-vue": "^4.5.2",
+		"@vue/eslint-config-prettier": "^8.0.0",
+		"@vue/eslint-config-typescript": "^12.0.0",
+		"eslint": "^8.55.0",
+		"eslint-plugin-vue": "^9.19.2",
+		"prettier": "^3.1.1",
 		"typescript": "^5.3.3",
 		"vite": "^5.0.10",
 		"vite-plugin-dts": "^3.6.4",
@@ -22,6 +35,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/MatijaNovosel/tri-state-checkbox.git"
-	}
+		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker.git"
+	},
+	"keywords": [
+		"birthdaypicker",
+		"vuetify-birthdaypicker",
+		"vuetify",
+		"vue3",
+		"vue",
+		"vuejs"
+	]
 }
