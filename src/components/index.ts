@@ -1,1 +1,1 @@
-export { VBirthdayPicker } from '@/components/VBirthdayPicker';
+export * from '@/components/VBirthdayPicker';

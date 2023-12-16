@@ -1,19 +1,37 @@
 {
 	"name": "vuetify-birthdaypicker",
+	"description": "Birthday picker component for Vuetify",
 	"private": false,
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"type": "module",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"style": "./dist/style.css",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs",
+			"types": "./dist/src/index.d.ts"
+		},
+		"./style.css": {
+			"import": "./dist/style.css",
+			"require": "./dist/style.css"
+		}
+	},
+	"files": [
+		"dist",
+		"src/components/VBirthdayPicker/VBirthdayPicker.vue"
+	],
 	"scripts": {
 		"dev": "vite",
-		"build": "vue-tsc && vite build",
-		"preview": "vite preview",
-		"type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
+		"build": "run-p type-check build-only",
+		"build-only": "vite build",
+		"build:docs": "vite build --mode=docs",
+		"preview": "vite preview --mode=docs",
+		"type-check": "vue-tsc --noEmit --composite false",
 		"lint": "eslint . --no-eslintrc --config .eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
 		"format": "prettier --write --cache src/"
-	},
-	"dependencies": {
-		"vue": "^3.3.11",
-		"vuetify": "^3.4.7"
 	},
 	"peerDependencies": {
 		"vuetify": "^3.0.0"
@@ -24,22 +42,35 @@
 		"@vitejs/plugin-vue": "^4.5.2",
 		"@vue/eslint-config-prettier": "^8.0.0",
 		"@vue/eslint-config-typescript": "^12.0.0",
-		"eslint": "^8.55.0",
+		"eslint": "^8.56.0",
 		"eslint-plugin-vue": "^9.19.2",
+		"npm-run-all": "^4.1.5",
 		"prettier": "^3.1.1",
 		"typescript": "^5.3.3",
 		"vite": "^5.0.10",
 		"vite-plugin-dts": "^3.6.4",
 		"vite-plugin-vuetify": "^2.0.1",
-		"vue-tsc": "^1.8.25"
+		"vue": "^3.3.12",
+		"vue-tsc": "^1.8.25",
+		"vuetify": "^3.4.7"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker.git"
 	},
+	"homepage": "https://github.com/igorexa34314/vuetify-birthdaypicker",
+	"bugs": {
+		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker/issues"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "igorexa34314",
+		"email": "igorkono343@gmail.com"
+	},
 	"keywords": [
 		"birthdaypicker",
 		"vuetify-birthdaypicker",
+		"vuetify-components",
 		"vuetify",
 		"vue3",
 		"vue",

@@ -7,7 +7,7 @@
 			:key="item.type"
 			:label="item.title"
 			:items="item.items"
-			v-model="datePickerState[item.type as keyof typeof datePickerState]"
+			v-model="datePickerState[item.type as keyof typeof datePickerState].value"
 			:density="density"
 			class="mr-4"
 			:variant="variant"
@@ -19,48 +19,44 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { computed } from 'vue';
 import { VSelect } from 'vuetify/components';
 
-const props = withDefaults(
-	defineProps<{
-		modelValue: Date;
-		fromYear?: string | number;
-		order?: 'dd-mmm-yyyy' | 'mmm-dd-yyyy';
-		density?: VSelect['$props']['density'];
-		variant?: VSelect['$props']['variant'];
-		maxWidth?: string | number;
-		monthFormat?: Intl.DateTimeFormatOptions['month'];
-		customFormatter?: Intl.DateTimeFormat['format'];
-	}>(),
-	{
-		modelValue: () => new Date(),
-		fromYear: () => new Date().getFullYear() - 100,
-		order: 'dd-mmm-yyyy',
-		variant: 'outlined',
-		density: 'compact',
-		maxWidth: 'none',
-		monthFormat: 'long',
-	}
-);
+export interface VBirthdayPickerProps {
+	modelValue: Date;
+	fromYear?: string | number;
+	order?: 'dd-mmm-yyyy' | 'mmm-dd-yyyy';
+	density?: VSelect['$props']['density'];
+	variant?: VSelect['$props']['variant'];
+	maxWidth?: string | number;
+	monthFormat?: Intl.DateTimeFormatOptions['month'];
+	monthFormatter?: (date: Date) => string;
+}
+
+const props = withDefaults(defineProps<VBirthdayPickerProps>(), {
+	modelValue: () => new Date(),
+	fromYear: () => new Date().getFullYear() - 100,
+	order: 'dd-mmm-yyyy',
+	variant: 'outlined',
+	density: 'compact',
+	maxWidth: 'none',
+	monthFormat: 'long',
+});
 
 const emit = defineEmits<{
-	(e: 'update:model-value', val: string | Date): void;
+	(e: 'update:model-value', val: Date): void;
 }>();
 
-const monthsForLocales = (
-	format: Intl.DateTimeFormatOptions['month'],
-	customFormatter?: Intl.DateTimeFormat['format']
-) => {
-	const formatter = customFormatter ?? new Intl.DateTimeFormat('en-US', { month: format }).format;
-	return [...new Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, m++ % 12))));
+const monthsForLocales = () => {
+	const formatter = props.monthFormatter ?? new Intl.DateTimeFormat('en-US', { month: props.monthFormat }).format;
+	return [...new Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, m % 12))));
 };
 
 const datePickerDateItems = computed(() => [
 	{
 		type: 'month',
 		title: 'Month',
-		items: monthsForLocales(props.monthFormat, props.customFormatter).map((title, i) => ({ title, value: i++ })),
+		items: monthsForLocales().map((title, i) => ({ title, value: ++i })),
 		order: props.order === 'dd-mmm-yyyy' ? 2 : 1,
 	},
 	{
@@ -74,25 +70,27 @@ const datePickerDateItems = computed(() => [
 		title: 'Year',
 		items: Array.from(
 			{ length: new Date().getFullYear() - +props.fromYear },
-			(_, i) => +props.fromYear - 1 + i
+			(_, i) => i + +props.fromYear
 		).reverse(),
 		order: 3,
 	},
 ]);
-
-const datePickerState = ref({
-	year: props.modelValue.getFullYear(),
-	month: props.modelValue.getMonth(),
-	day: props.modelValue.getDate(),
-});
-
-watch(
-	datePickerState,
-	newVal => {
-		emit('update:model-value', new Date(Object.values(newVal).join('-')));
-	},
-	{ deep: true }
-);
+const datePickerState = {
+	year: computed({
+		get: () => props.modelValue.getFullYear(),
+		set: val => emit('update:model-value', new Date(val, props.modelValue.getMonth(), props.modelValue.getDate())),
+	}),
+	month: computed({
+		get: () => props.modelValue.getMonth() + 1,
+		set: val =>
+			emit('update:model-value', new Date(props.modelValue.getFullYear(), val - 1, props.modelValue.getDate())),
+	}),
+	day: computed({
+		get: () => props.modelValue.getDate(),
+		set: val =>
+			emit('update:model-value', new Date(props.modelValue.getFullYear(), props.modelValue.getMonth(), val)),
+	}),
+};
 </script>
 
 <style scoped>

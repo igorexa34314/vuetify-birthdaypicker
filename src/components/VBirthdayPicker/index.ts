@@ -1,1 +1,4 @@
-export { default as VBirthdayPicker } from '@/components/VBirthdayPicker/VBirthdayPicker.vue';
+export {
+	default as VBirthdayPicker,
+	type VBirthdayPickerProps,
+} from '@/components/VBirthdayPicker/VBirthdayPicker.vue';
