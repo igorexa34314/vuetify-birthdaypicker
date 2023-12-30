@@ -43,9 +43,7 @@ const props = withDefaults(defineProps<VBirthdayPickerProps>(), {
 	monthFormat: 'long',
 });
 
-const emit = defineEmits<{
-	(e: 'update:model-value', val: Date): void;
-}>();
+const dateModel = defineModel<Date>({ default: () => new Date() });
 
 const monthsForLocales = () => {
 	const formatter = props.monthFormatter ?? new Intl.DateTimeFormat('en-US', { month: props.monthFormat }).format;
@@ -75,20 +73,19 @@ const datePickerDateItems = computed(() => [
 		order: 3,
 	},
 ]);
+
 const datePickerState = {
 	year: computed({
 		get: () => props.modelValue.getFullYear(),
-		set: val => emit('update:model-value', new Date(val, props.modelValue.getMonth(), props.modelValue.getDate())),
+		set: val => (dateModel.value = new Date(val, dateModel.value.getMonth(), dateModel.value.getDate())),
 	}),
 	month: computed({
 		get: () => props.modelValue.getMonth() + 1,
-		set: val =>
-			emit('update:model-value', new Date(props.modelValue.getFullYear(), val - 1, props.modelValue.getDate())),
+		set: val => (dateModel.value = new Date(dateModel.value.getFullYear(), val - 1, dateModel.value.getDate())),
 	}),
 	day: computed({
 		get: () => props.modelValue.getDate(),
-		set: val =>
-			emit('update:model-value', new Date(props.modelValue.getFullYear(), props.modelValue.getMonth(), val)),
+		set: val => (dateModel.value = new Date(dateModel.value.getFullYear(), dateModel.value.getMonth(), val)),
 	}),
 };
 </script>

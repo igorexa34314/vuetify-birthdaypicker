@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'node:url';
-import { resolve, dirname } from 'path';
-
 import { defineConfig, loadEnv } from 'vite';
+import { URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import dts from 'vite-plugin-dts';
@@ -28,7 +27,15 @@ export default ({ mode }) => {
 		],
 		resolve: {
 			alias: {
-				'@': resolve(dirname(fileURLToPath(import.meta.url)), './src'),
+				'@': fileURLToPath(new URL('./src', import.meta.url)),
+			},
+			// External
+			dedupe: ['vue', 'vuetify'],
+		},
+		server: {
+			fs: {
+				// Allow serving files from one level up to the project root
+				allow: ['..'],
 			},
 		},
 		optimizeDeps: {
@@ -40,14 +47,27 @@ export default ({ mode }) => {
 				external: mode === 'docs' ? undefined : ['vue', 'vuetify/components'],
 				output: {
 					esModule: true,
+					generatedCode: {
+						reservedNamesAsProps: false,
+					},
+					interop: 'compat',
+					systemNullSetters: false,
 					exports: 'named',
 					globals: {
 						vue: 'Vue',
 						vuetify: 'Vuetify',
 						'vuetify/components': 'VuetifyComponents',
 					},
+					manualChunks:
+						mode !== 'docs'
+							? undefined
+							: {
+									vue: ['vue'],
+									vuetify: ['vuetify/components'],
+								},
 				},
 			},
+			target: 'esnext',
 			lib:
 				mode === 'docs'
 					? undefined
