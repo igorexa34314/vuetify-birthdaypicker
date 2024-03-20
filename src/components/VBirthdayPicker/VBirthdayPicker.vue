@@ -14,6 +14,9 @@
 			hide-details
 			:class="`${item.type}-select`"
 			:style="{ order: item.order }">
+			<template v-for="slot in slots" :key="slot.name" v-slot:[slot.name]="slotProps">
+				<component :is="slot(slotProps)" :name="`${item.type}:${slot.name}`" v-bind="slotProps" />
+			</template>
 		</v-select>
 	</div>
 </template>
@@ -22,6 +25,17 @@
 import { computed } from 'vue';
 import { VSelect } from 'vuetify/components';
 
+interface DateItemProps {
+	title?: string;
+}
+
+interface MonthProps extends DateItemProps {
+	format?: Intl.DateTimeFormatOptions['month'];
+	formatter?: (date: Date) => string;
+}
+interface DayProps extends DateItemProps {}
+interface YearProps extends DateItemProps {}
+
 export interface VBirthdayPickerProps {
 	modelValue: Date;
 	fromYear?: string | number;
@@ -29,10 +43,11 @@ export interface VBirthdayPickerProps {
 	density?: VSelect['$props']['density'];
 	variant?: VSelect['$props']['variant'];
 	maxWidth?: string | number;
-	monthFormat?: Intl.DateTimeFormatOptions['month'];
-	monthFormatter?: (date: Date) => string;
-}
 
+	month?: MonthProps | boolean;
+	day?: DayProps | boolean;
+	year?: YearProps | boolean;
+}
 const props = withDefaults(defineProps<VBirthdayPickerProps>(), {
 	modelValue: () => new Date(),
 	fromYear: () => new Date().getFullYear() - 100,
@@ -40,39 +55,65 @@ const props = withDefaults(defineProps<VBirthdayPickerProps>(), {
 	variant: 'outlined',
 	density: 'compact',
 	maxWidth: 'none',
-	monthFormat: 'long',
+	month: () => ({
+		format: 'long',
+	}),
+	day: true,
+	year: true,
 });
 
 const dateModel = defineModel<Date>({ default: () => new Date() });
+const slots = defineSlots<VSelect['$slots']>();
 
 const monthsForLocales = () => {
-	const formatter = props.monthFormatter ?? new Intl.DateTimeFormat('en-US', { month: props.monthFormat }).format;
+	const formatter =
+		typeof props.month === 'object' && props.month.formatter
+			? props.month.formatter
+			: new Intl.DateTimeFormat('en-US', {
+					month: typeof props.month === 'object' && props.month.format ? props.month.format : 'long',
+				}).format;
+
 	return [...new Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, m % 12))));
 };
 
-const datePickerDateItems = computed(() => [
-	{
-		type: 'month',
-		title: 'Month',
-		items: monthsForLocales().map((title, i) => ({ title, value: ++i })),
-		order: props.order === 'dd-mmm-yyyy' ? 2 : 1,
-	},
-	{
-		type: 'day',
-		title: 'Day',
-		items: Array.from({ length: 31 }, (_, i) => ++i),
-		order: props.order === 'dd-mmm-yyyy' ? 1 : 2,
-	},
-	{
-		type: 'year',
-		title: 'Year',
-		items: Array.from(
-			{ length: new Date().getFullYear() - +props.fromYear },
-			(_, i) => i + +props.fromYear
-		).reverse(),
-		order: 3,
-	},
-]);
+interface DatePickerDateItem {
+	type: string;
+	title: string;
+	items: VSelect['$props']['items'];
+	order: number;
+}
+
+const datePickerDateItems = computed(() => {
+	return [
+		props.month
+			? {
+					type: 'month',
+					title: 'Month',
+					items: monthsForLocales().map((title, i) => ({ title, value: ++i })),
+					order: props.order === 'dd-mmm-yyyy' ? 2 : 1,
+				}
+			: false,
+		props.day
+			? {
+					type: 'day',
+					title: 'Day',
+					items: Array.from({ length: 31 }, (_, i) => ++i),
+					order: props.order === 'dd-mmm-yyyy' ? 1 : 2,
+				}
+			: false,
+		props.year
+			? {
+					type: 'year',
+					title: 'Year',
+					items: Array.from(
+						{ length: new Date().getFullYear() - +props.fromYear },
+						(_, i) => i + +props.fromYear
+					).reverse(),
+					order: 3,
+				}
+			: false,
+	].filter(Boolean) as DatePickerDateItem[];
+});
 
 const datePickerState = {
 	year: computed({
