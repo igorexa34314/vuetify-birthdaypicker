@@ -1,10 +1,10 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static app content to Github Pages
+name: Deploy a playground
 
 on:
    # Runs on pushes targeting the default branch
    push:
-      branches: ['main']
+      branches: ["main"]
 
    # Allows you to run this workflow manually from the Actions tab
    workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-   group: 'pages'
+   group: pages
    cancel-in-progress: true
 
 env:
@@ -32,42 +32,29 @@ jobs:
       runs-on: ubuntu-latest
       steps:
          - name: Checkout
-           uses: actions/checkout@v3
+           uses: actions/checkout@v5
+         # workaround for npm registry key change
+         # ref. `pnpm@10.1.0` / `pnpm@9.15.4` cannot be installed due to key id mismatch · Issue #612 · nodejs/corepack
+         # - https://github.com/nodejs/corepack/issues/612#issuecomment-2629496091
+         - run: npm i -g corepack@latest && corepack enable
          - name: Set up Node
-           uses: actions/setup-node@v3
+           uses: actions/setup-node@v5
            with:
-              node-version: 18
-
+              node-version: lts/*
+              cache: pnpm
          - name: Install pnpm
-           uses: pnpm/action-setup@v2
-           with:
-              version: latest
-              run_install: false
-
-         - name: Get pnpm store directory
-           shell: bash
-           run: |
-              echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-         - name: Setup pnpm cache
-           uses: actions/cache@v3
-           with:
-              path: ${{ env.STORE_PATH }}
-              key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-              restore-keys: |
-                 ${{ runner.os }}-pnpm-store-
-
+           uses: pnpm/action-setup@v4
          - name: Install dependencies
-           run: pnpm install
+           run: pnpm i --frozen-lockfile
          - name: Build
-           run: pnpm build:docs
+           run: pnpm build:playground
          - name: Setup Pages
-           uses: actions/configure-pages@v3
+           uses: actions/configure-pages@v5
          - name: Upload artifact
-           uses: actions/upload-pages-artifact@v1
+           uses: actions/upload-pages-artifact@v4
            with:
-              # Upload docs repository
-              path: './docs'
+              # Upload dist folder
+              path: ./playground/dist
          - name: Deploy to GitHub Pages
            id: deployment
-           uses: actions/deploy-pages@v1
+           uses: actions/deploy-pages@v4

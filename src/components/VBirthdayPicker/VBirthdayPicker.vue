@@ -2,7 +2,7 @@
 	<div
 		class="v-birthdaypicker d-flex flex-column flex-sm-row align-sm-center"
 		:style="{ 'max-width': `${maxWidth}px` }">
-		<v-select
+		<VSelect
 			v-for="item in datePickerDateItems"
 			:key="item.type"
 			:label="item.title"
@@ -14,7 +14,7 @@
 			hide-details
 			:class="`${item.type}-select`"
 			:style="{ order: item.order }">
-		</v-select>
+		</VSelect>
 	</div>
 </template>
 
@@ -46,7 +46,8 @@ const props = withDefaults(defineProps<VBirthdayPickerProps>(), {
 const dateModel = defineModel<Date>({ default: () => new Date() });
 
 const monthsForLocales = () => {
-	const formatter = props.monthFormatter ?? new Intl.DateTimeFormat('en-US', { month: props.monthFormat }).format;
+	const formatter =
+		props.monthFormatter ?? new Intl.DateTimeFormat('en-US', { month: props.monthFormat }).format;
 	return [...new Array(12).keys()].map(m => formatter(new Date(Date.UTC(2022, m % 12))));
 };
 
@@ -77,20 +78,31 @@ const datePickerDateItems = computed(() => [
 const datePickerState = {
 	year: computed({
 		get: () => props.modelValue.getFullYear(),
-		set: val => (dateModel.value = new Date(val, dateModel.value.getMonth(), dateModel.value.getDate())),
+		set: val =>
+			(dateModel.value = new Date(val, dateModel.value.getMonth(), dateModel.value.getDate())),
 	}),
 	month: computed({
 		get: () => props.modelValue.getMonth() + 1,
-		set: val => (dateModel.value = new Date(dateModel.value.getFullYear(), val - 1, dateModel.value.getDate())),
+		set: val =>
+			(dateModel.value = new Date(
+				dateModel.value.getFullYear(),
+				val - 1,
+				dateModel.value.getDate()
+			)),
 	}),
 	day: computed({
 		get: () => props.modelValue.getDate(),
-		set: val => (dateModel.value = new Date(dateModel.value.getFullYear(), dateModel.value.getMonth(), val)),
+		set: val =>
+			(dateModel.value = new Date(
+				dateModel.value.getFullYear(),
+				dateModel.value.getMonth(),
+				val
+			)),
 	}),
 };
 </script>
 
-<style scoped>
+<style>
 .v-birthdaypicker {
 }
 </style>
