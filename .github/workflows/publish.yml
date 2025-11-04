@@ -1,0 +1,35 @@
+name: Publish Package
+
+on:
+   push:
+      tags:
+         - "v*"
+
+permissions:
+   id-token: write
+   contents: write
+
+jobs:
+   publish-npm:
+      runs-on: ubuntu-latest
+      steps:
+         - name: Checkout
+           uses: actions/checkout@v5
+         # workaround for npm registry key change
+         # ref. `pnpm@10.1.0` / `pnpm@9.15.4` cannot be installed due to key id mismatch · Issue #612 · nodejs/corepack
+         # - https://github.com/nodejs/corepack/issues/612#issuecomment-2629496091
+         - run: npm i -g corepack@latest && corepack enable
+         - name: Set up Node
+           uses: actions/setup-node@v5
+           with:
+              node-version: lts/*
+              cache: pnpm
+         - name: Install pnpm
+           uses: pnpm/action-setup@v4
+         - name: Install dependencies
+           run: pnpm i --frozen-lockfile
+         - name: Build
+           run: pnpm build
+         - run: pnpm publish -r --access public --no-git-checks
+           env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

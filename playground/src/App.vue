@@ -8,20 +8,20 @@
 			<v-btn class="mt-3" block @click="changeDate">Change date state</v-btn>
 		</h3>
 		<span class="mt-6 mb-5">Default</span>
-		<v-birthday-picker v-model="birthdayDate" :max-width="450" />
+		<VBirthdayPicker v-model="birthdayDate" :max-width="450" />
 
 		<span class="mt-6 mb-5">order="mmm-dd-yyyy"</span>
-		<v-birthday-picker v-model="birthdayDate" order="mmm-dd-yyyy" :max-width="450" />
+		<VBirthdayPicker v-model="birthdayDate" order="mmm-dd-yyyy" :max-width="450" />
 
 		<span class="mt-6 mb-5">from-year="1960"</span>
-		<v-birthday-picker v-model="birthdayDate" :from-year="1960" :max-width="450" />
+		<VBirthdayPicker v-model="birthdayDate" :from-year="1960" :max-width="450" />
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { VBtn } from 'vuetify/components';
-import { VBirthdayPicker } from '@/components';
+import { VBirthdayPicker } from '../../src';
 
 const birthdayDate = ref(new Date());
 

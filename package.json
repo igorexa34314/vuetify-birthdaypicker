@@ -1,72 +1,18 @@
 {
 	"name": "vuetify-birthdaypicker",
-	"description": "Birthday picker component for Vuetify",
-	"private": false,
 	"version": "0.0.3",
+	"description": "Birthday picker component for Vuetify",
 	"type": "module",
-	"main": "./dist/index.umd.cjs",
-	"module": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"style": "./dist/style.css",
-	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"types": "./dist/src/index.d.ts"
-		},
-		"./style.css": {
-			"import": "./dist/style.css",
-			"require": "./dist/style.css"
-		}
-	},
-	"files": [
-		"dist",
-		"src/components/VBirthdayPicker/VBirthdayPicker.vue"
-	],
-	"scripts": {
-		"dev": "vite",
-		"build": "run-p type-check build-only",
-		"build-only": "vite build",
-		"build:docs": "vite build --mode=docs",
-		"preview": "vite preview --mode=docs",
-		"type-check": "vue-tsc --noEmit --composite false",
-		"lint": "eslint . --no-eslintrc --config .eslintrc.cjs --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
-		"format": "prettier --write --cache src/"
-	},
-	"peerDependencies": {
-		"vuetify": "^3.0.0"
-	},
-	"devDependencies": {
-		"@rushstack/eslint-patch": "^1.6.1",
-		"@types/node": "^20.10.6",
-		"@vitejs/plugin-vue": "^4.6.1",
-		"@vue/eslint-config-prettier": "^8.0.0",
-		"@vue/eslint-config-typescript": "^12.0.0",
-		"eslint": "^8.56.0",
-		"eslint-plugin-vue": "^9.19.2",
-		"npm-run-all": "^4.1.5",
-		"prettier": "^3.1.1",
-		"typescript": "^5.3.3",
-		"vite": "^5.0.10",
-		"vite-plugin-dts": "^3.7.0",
-		"vite-plugin-vuetify": "^2.0.1",
-		"vue": "^3.4.3",
-		"vue-tsc": "^1.8.27",
-		"vuetify": "^3.4.9"
+	"license": "MIT",
+	"homepage": "https://github.com/igorexa34314/vuetify-birthdaypicker#readme",
+	"bugs": {
+		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker.git"
 	},
-	"homepage": "https://github.com/igorexa34314/vuetify-birthdaypicker",
-	"bugs": {
-		"url": "https://github.com/igorexa34314/vuetify-birthdaypicker/issues"
-	},
-	"license": "MIT",
-	"author": {
-		"name": "igorexa34314",
-		"email": "igorkono343@gmail.com"
-	},
+	"author": "Igor Kononenko <igorkono343@gmail.com>",
 	"keywords": [
 		"birthdaypicker",
 		"vuetify-birthdaypicker",
@@ -75,5 +21,54 @@
 		"vue3",
 		"vue",
 		"vuejs"
-	]
+	],
+	"files": [
+		"dist"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": "./dist/index.js",
+		"./package.json": "./package.json"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"dev": "tsdown --watch",
+		"dev:playground": "vite",
+		"build:playground": "vite build",
+		"preview:playground": "vite preview",
+		"test": "vitest",
+		"typecheck": "vue-tsc --noEmit",
+		"release": "bumpp && pnpm publish",
+		"prepublishOnly": "pnpm run build",
+		"lint": "eslint src/",
+		"format": "prettier --write --cache src/"
+	},
+	"peerDependencies": {
+		"vue": "^3.0.0",
+		"vuetify": "^3.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "^24.9.1",
+		"@vitejs/plugin-vue": "^6.0.1",
+		"@vue/eslint-config-prettier": "^10.2.0",
+		"@vue/eslint-config-typescript": "^14.6.0",
+		"@vue/test-utils": "^2.4.6",
+		"bumpp": "^10.3.1",
+		"eslint-plugin-vue": "^10.5.1",
+		"happy-dom": "^20.0.8",
+		"prettier": "^3.6.2",
+		"tsdown": "^0.15.9",
+		"typescript": "^5.9.3",
+		"vite": "npm:rolldown-vite@^7.1.19",
+		"vitest": "^4.0.1",
+		"vue": "^3.5.22",
+		"vue-tsc": "^3.1.1",
+		"vuetify": "^3.10.8"
+	},
+	"packageManager": "pnpm@10.20.0"
 }
