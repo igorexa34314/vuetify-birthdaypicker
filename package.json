@@ -62,6 +62,7 @@
 		"eslint-plugin-vue": "^10.5.1",
 		"happy-dom": "^20.0.8",
 		"prettier": "^3.6.2",
+		"resize-observer-polyfill": "^1.5.1",
 		"tsdown": "^0.15.9",
 		"typescript": "^5.9.3",
 		"vite": "npm:rolldown-vite@^7.1.19",

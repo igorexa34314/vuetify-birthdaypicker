@@ -5,5 +5,11 @@ export default defineConfig({
 	plugins: [Vue()],
 	test: {
 		environment: 'happy-dom',
+		root: './tests',
+		server: {
+			deps: {
+				inline: ['vuetify'],
+			},
+		},
 	},
 });
