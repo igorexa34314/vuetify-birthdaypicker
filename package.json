@@ -1,6 +1,6 @@
 {
 	"name": "vuetify-birthdaypicker",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"description": "Birthday picker component for Vuetify",
 	"type": "module",
 	"license": "MIT",
