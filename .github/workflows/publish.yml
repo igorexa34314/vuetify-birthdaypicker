@@ -7,7 +7,7 @@ on:
 
 permissions:
    id-token: write
-   contents: read
+   contents: write
 
 jobs:
    publish-npm:
@@ -35,5 +35,11 @@ jobs:
 
          - name: Build
            run: pnpm build
+
+         - name: Changelog
+           run: npx changelogithub --no-group
+           continue-on-error: true
+           env:
+              GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
          - run: pnpm publish --access public --no-git-checks
